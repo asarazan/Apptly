@@ -1,0 +1,3 @@
+<resources>
+    <item type="layout" name="activity_stream_list">@layout/activity_stream_twopane</item>
+</resources>
