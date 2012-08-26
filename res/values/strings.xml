@@ -2,6 +2,6 @@
 
     <string name="app_name">Apptly</string>
     <string name="title_stream_detail">Stream Detail</string>
-    <string name="title_stream_list">Streams</string>
+    <string name="title_stream_list">Apptly</string>
 
 </resources>
