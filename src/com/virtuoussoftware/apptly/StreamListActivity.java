@@ -1,9 +1,13 @@
 package com.virtuoussoftware.apptly;
 
+import com.virtuoussoftware.apptly.jankotron.SlowTabulizerActivity;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 
 public class StreamListActivity extends FragmentActivity
@@ -40,5 +44,25 @@ public class StreamListActivity extends FragmentActivity
             detailIntent.putExtra(StreamDetailFragment.ARG_ITEM_ID, id);
             startActivity(detailIntent);
         }
+    }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+    	MenuInflater inflater = getMenuInflater();
+    	inflater.inflate(R.menu.standard, menu);
+    	return true;
+    }
+    
+    @Override
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+    	switch (item.getItemId()) {
+    	case R.id.janky_stream_menu_item:
+    		Intent intent = new Intent(this, SlowTabulizerActivity.class);
+    	    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    	    startActivity(intent);
+    		return true;
+    	}
+    	
+    	return super.onMenuItemSelected(featureId, item);
     }
 }
