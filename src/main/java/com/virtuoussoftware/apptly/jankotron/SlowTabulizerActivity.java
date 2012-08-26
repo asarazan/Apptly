@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.util.Log;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -40,6 +41,12 @@ public class SlowTabulizerActivity extends Activity {
         }
         fetchStuff();
 	}
+
+    private String mockFetchGlobalStreamAsString() {
+        return "[ { 'id' : '1', 'user' : { 'id' : '1', 'username' : 'asarazan' }, 'text' : 'Hey @KirinDave, how\\'re the twoots?' }," +
+               "  { 'id' : '2', 'user' : { 'id' : '2', 'username' : 'KirinDave' }, 'text' : '@asarazan There\\'s twoots EVERYWHERE' }" +
+                "]";
+    }
 
 	private String fetchGlobalStreamAsString() {		
 		StringBuilder builder = new StringBuilder();
@@ -84,7 +91,7 @@ public class SlowTabulizerActivity extends Activity {
 			.append(postId)
 			.append("] ")
 			.append(username)
-			.append("\n  ")
+			.append("\n\t")
 			.append(content);
 			
 			return builder.toString();
@@ -98,7 +105,8 @@ public class SlowTabulizerActivity extends Activity {
 	}
 
 	private void fetchStuff() {
-		String globalStream = fetchGlobalStreamAsString();
+		//String globalStream = fetchGlobalStreamAsString();
+        String globalStream = mockFetchGlobalStreamAsString();
         List<String> strings = new ArrayList<String>();
 		try {
 			JSONArray json = new JSONArray(globalStream);
@@ -108,7 +116,7 @@ public class SlowTabulizerActivity extends Activity {
 				strings.add(stringForObject(obj));
 			}
 		} catch (Exception e) {
-			
+            Log.e("JSON Parse Error", "Couldn't Parse JSON", e);
 		}
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.simple_text_view, strings);
         ListFragment list = (ListFragment)getFragmentManager().findFragmentById(R.id.janky_list_fragment);
