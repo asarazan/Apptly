@@ -7,6 +7,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -28,17 +29,20 @@ import android.widget.TextView;
 import com.virtuoussoftware.apptly.net.*;
 import com.virtuoussoftware.apptly.R;
 
-public class SlowTabulizerActivity extends FragmentActivity {
+public class SlowTabulizerActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
-		setContentView(R.layout.janky_list);
-		fetchStuff();
+        try {
+            setContentView(R.layout.janky_list);
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        fetchStuff();
 	}
 
 	private String fetchGlobalStreamAsString() {		
 		StringBuilder builder = new StringBuilder();
-		BufferedReader reader = null;
 		try {
 			HttpClient client = new DefaultHttpClient();
 			HttpGet request = new HttpGet();
@@ -50,8 +54,8 @@ public class SlowTabulizerActivity extends FragmentActivity {
 			if (statusCode == 200) {
 				HttpEntity entity = response.getEntity();
 				InputStream content = entity.getContent();
-				reader = new BufferedReader(new InputStreamReader(content));
-				String line = null;
+				BufferedReader reader = new BufferedReader(new InputStreamReader(content));
+				String line;
 				while ((line = reader.readLine()) != null) {
 					builder.append(line);
 				}
@@ -95,22 +99,19 @@ public class SlowTabulizerActivity extends FragmentActivity {
 
 	private void fetchStuff() {
 		String globalStream = fetchGlobalStreamAsString();
+        List<String> strings = new ArrayList<String>();
 		try {
-			List<String> strings = new ArrayList<String>();
 			JSONArray json = new JSONArray(globalStream);
 			int len = json.length();
 			for (int i = 0; i < len; ++i) {
 				JSONObject obj = json.getJSONObject(i);
 				strings.add(stringForObject(obj));
 			}
-			
-			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.simple_text_view, strings);
-
-			ListFragment list = (ListFragment)getFragmentManager().findFragmentById(R.id.janky_list_fragment);
-			list.setListAdapter(adapter);
-			
 		} catch (Exception e) {
 			
 		}
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.simple_text_view, strings);
+        ListFragment list = (ListFragment)getFragmentManager().findFragmentById(R.id.janky_list_fragment);
+        list.setListAdapter(adapter);
 	}
 }
