@@ -41,7 +41,7 @@
         </service>
         <provider
                 android:name=".content.ApptlyContentProvider"
-                android:authorities="com.virtuoussoftware.apptly.content_provider" />
+                android:authorities="com.virtuoussoftware.apptly.content" />
     </application>
 
 </manifest>

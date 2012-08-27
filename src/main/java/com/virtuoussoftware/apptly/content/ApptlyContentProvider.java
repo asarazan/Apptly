@@ -17,7 +17,7 @@ import android.net.Uri;
  */
 public class ApptlyContentProvider extends ContentProvider {
 
-    private static final String AUTHORITY = "com.virtuoussoftware.apptly.content_provider";
+    private static final String AUTHORITY = "com.virtuoussoftware.apptly.content";
 
     private static final String BASE_PATH = "apptly";
 
