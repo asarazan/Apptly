@@ -39,6 +39,9 @@
                     android:name="android.content.SyncAdapter"
                     android:resource="@xml/syncadapter" />
         </service>
+        <provider
+                android:name=".content.ApptlyContentProvider"
+                android:authorities="com.virtuoussoftware.apptly.content_provider" />
     </application>
 
 </manifest>
