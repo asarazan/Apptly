@@ -27,11 +27,26 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".StreamListActivity" />
         </activity>
-        <activity android:label="JANKZ0R" android:name=".jankotron.SlowTabulizerActivity"></activity>
         <activity
             android:name=".auth.AuthenticationActivity" 
             android:label="Authenticate">
         </activity>
+        <activity android:label="JANKZ0R" android:name=".jankotron.SlowTabulizerActivity" />
+        <service
+                android:name=".sync.SyncService"
+                android:exported="true">
+            <intent-filter>
+                <action
+                        android:name="android.content.SyncAdapter" />
+            </intent-filter>
+            <meta-data
+                    android:name="android.content.SyncAdapter"
+                    android:resource="@xml/syncadapter" />
+        </service>
+        <provider
+                android:name=".content.ApptlyContentProvider"
+                android:authorities="com.virtuoussoftware.apptly.content" />
+>>>>>>> e4b06906a452b68a7ef984a41c0a2c079cb14b2c
     </application>
 
 </manifest>

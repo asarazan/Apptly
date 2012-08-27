@@ -8,7 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.util.Log;
+import com.virtuoussoftware.apptly.auth.Credentials;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -72,6 +74,7 @@ public class SlowTabulizerActivity extends Activity {
 		try {
 			HttpClient client = new DefaultHttpClient();
 			HttpGet request = new HttpGet();
+            request.addHeader("Authorization", "Bearer " + Credentials.getAuthToken());
 			request.setURI(new URI(Path.API_ENDPOINT + Path.API_GLOBAL_STREAM));
 			HttpResponse response = client.execute(request);
 
@@ -86,9 +89,11 @@ public class SlowTabulizerActivity extends Activity {
 					builder.append(line);
 				}
 				return builder.toString();
-			}				
+			} else {
+                Log.e("HTTP Error: " + statusCode, statusLine.getReasonPhrase());
+            }
 		} catch (Exception e) {
-			// TODO (not really)
+            Log.e("Exception Raised", e.getMessage(), e);
 		}			
 		return null;
 	}
@@ -124,10 +129,24 @@ public class SlowTabulizerActivity extends Activity {
 	}
 
 	private void fetchStuff() {
-		//String globalStream = fetchGlobalStreamAsString();
-        String globalStream = mockFetchGlobalStreamAsString();
-        JSONStreamAdapter adapter = new JSONStreamAdapter(this, globalStream);
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... voids) {
+                return fetchGlobalStreamAsString();
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                handleFetchedStuff(s);
+            }
+        }.execute();
+        //String globalStream = mockFetchGlobalStreamAsString();
+        //handleFetchedStuff(globalStream);
+	}
+
+    private void handleFetchedStuff(String stuff) {
+        JSONStreamAdapter adapter = new JSONStreamAdapter(this, stuff);
         ListFragment list = (ListFragment)getFragmentManager().findFragmentById(R.id.janky_list_fragment);
         list.setListAdapter(adapter);
-	}
+    }
 }
