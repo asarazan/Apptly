@@ -6,8 +6,9 @@
 
         <ImageView
             android:id="@+id/stream_item_portrait"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:layout_margin="5dp"
             android:contentDescription="This is a portrait"
             android:src="@drawable/ic_launcher" />
 
