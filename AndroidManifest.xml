@@ -28,6 +28,10 @@
                 android:value=".StreamListActivity" />
         </activity>
         <activity android:label="JANKZ0R" android:name=".jankotron.SlowTabulizerActivity"></activity>
+        <activity
+            android:name=".auth.AuthenticationActivity" 
+            android:label="Authenticate">
+        </activity>
     </application>
 
 </manifest>
