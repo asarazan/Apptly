@@ -27,7 +27,18 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".StreamListActivity" />
         </activity>
-        <activity android:label="JANKZ0R" android:name=".jankotron.SlowTabulizerActivity"></activity>
+        <activity android:label="JANKZ0R" android:name=".jankotron.SlowTabulizerActivity" />
+        <service
+                android:name=".sync.SyncService"
+                android:exported="true">
+            <intent-filter>
+                <action
+                        android:name="android.content.SyncAdapter" />
+            </intent-filter>
+            <meta-data
+                    android:name="android.content.SyncAdapter"
+                    android:resource="@xml/syncadapter" />
+        </service>
     </application>
 
 </manifest>
