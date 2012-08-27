@@ -29,6 +29,7 @@ import android.widget.TextView;
 
 import com.virtuoussoftware.apptly.net.*;
 import com.virtuoussoftware.apptly.R;
+import com.virtuoussoftware.apptly.list.JSONStreamAdapter;
 
 public class SlowTabulizerActivity extends Activity {
 	@Override
@@ -43,8 +44,9 @@ public class SlowTabulizerActivity extends Activity {
 	}
 
     private String mockFetchGlobalStreamAsString() {
-        return "[ { 'id' : '1', 'user' : { 'id' : '1', 'username' : 'asarazan' }, 'text' : 'Hey @KirinDave, how\\'re the twoots?' }," +
-               "  { 'id' : '2', 'user' : { 'id' : '2', 'username' : 'KirinDave' }, 'text' : '@asarazan There\\'s twoots EVERYWHERE' }" +
+        return "[" +
+                "  { 'id' : '2', 'user' : { 'id' : '2', 'name' : 'Dave Fayram' }, 'html' : '<html><b>@asarazan</b> There\\'s twoots EVERYWHERE</html>' }," +
+                "  { 'id' : '1', 'user' : { 'id' : '1', 'name' : 'Aaron Sarazan' }, 'html' : '<html>Hey <b>@KirinDave</b>, how\\'re the twoots?</html>' }" +
                 "]";
     }
 
@@ -107,18 +109,7 @@ public class SlowTabulizerActivity extends Activity {
 	private void fetchStuff() {
 		//String globalStream = fetchGlobalStreamAsString();
         String globalStream = mockFetchGlobalStreamAsString();
-        List<String> strings = new ArrayList<String>();
-		try {
-			JSONArray json = new JSONArray(globalStream);
-			int len = json.length();
-			for (int i = 0; i < len; ++i) {
-				JSONObject obj = json.getJSONObject(i);
-				strings.add(stringForObject(obj));
-			}
-		} catch (Exception e) {
-            Log.e("JSON Parse Error", "Couldn't Parse JSON", e);
-		}
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.simple_text_view, strings);
+        JSONStreamAdapter adapter = new JSONStreamAdapter(this, globalStream);
         ListFragment list = (ListFragment)getFragmentManager().findFragmentById(R.id.janky_list_fragment);
         list.setListAdapter(adapter);
 	}
