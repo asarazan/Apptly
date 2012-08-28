@@ -1,5 +1,6 @@
 package com.virtuoussoftware.apptly;
 
+import com.virtuoussoftware.apptly.auth.AuthenticationActivity;
 import com.virtuoussoftware.apptly.jankotron.SlowTabulizerActivity;
 
 import android.content.Intent;
@@ -54,12 +55,17 @@ public class StreamListActivity extends FragmentActivity
     
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
+      Intent intent;
     	switch (item.getItemId()) {
     	case R.id.janky_stream_menu_item:
-    		Intent intent = new Intent(this, SlowTabulizerActivity.class);
+    		intent = new Intent(this, SlowTabulizerActivity.class);
     	    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     	    startActivity(intent);
     		return true;
+    	case R.id.auth_test_menu_item:
+    	  intent = new Intent(this, AuthenticationActivity.class);
+    	  startActivity(intent);
+    	  return true;
     	}
     	
     	return super.onMenuItemSelected(featureId, item);

@@ -1,9 +1,16 @@
 package com.virtuoussoftware.apptly.auth;
 
 import com.virtuoussoftware.apptly.R;
+import com.virtuoussoftware.apptly.api.AppApiEngine;
+import com.virtuoussoftware.apptly.entities.Profile;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.LoaderManager;
 import android.app.ProgressDialog;
+import android.content.AsyncTaskLoader;
+import android.content.Context;
+import android.content.Loader;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,14 +20,10 @@ import android.net.Uri;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
-class AuthenticationRules {
-  public static final String BASE_URI = "/alpha.app.net/oauth/authenticate";
-  public static final String REDIRECT_BASIS = "https://dave.fayr.am";
-  public static final String SCOPES = "stream email write_post follow messages export";
-}
-
+@SuppressLint("SetJavaScriptEnabled")
 public class AuthenticationActivity extends Activity {
   private final String TAG = this.getClass().getName();
+  private final int LOAD_PROFILE = 0;
   
   private WebView wv;
   private ProgressBar progressBar;
@@ -62,12 +65,55 @@ public class AuthenticationActivity extends Activity {
       /* TODO: Pull down user's profile synchronously and get the username and email to populate some 
        *       essential details.
        */
+      final String auth = isolatedToken;
+      final Context ctx = this;
+      final AuthenticationActivity anchor = this;
+      Bundle args = new Bundle();
+      Loader<Profile> l = getLoaderManager().initLoader(LOAD_PROFILE, args, new LoaderManager.LoaderCallbacks<Profile>() {
+        
+        @Override
+        public Loader<Profile> onCreateLoader(int id, Bundle args) {
+          if(id == LOAD_PROFILE) {
+            Log.d(TAG, "Creating task loader for profile.");
+            return new AsyncTaskLoader<Profile>(ctx) {
+              public Profile loadInBackground() {
+                Log.d(TAG, "Running api engine call. Who knows what wil happen now?");
+                return AppApiEngine.getSelfProfile(new Credentials());
+              };
+            };
+          }
+          else {
+            Log.d(TAG, "I got a loader id I don't get: " + id);
+          }
+          return null;
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Profile> arg0, Profile arg1) {
+          Log.d(TAG, "LOAD FINISHED!");
+          anchor.onProfileLoaded(arg1);
+        }
+
+        @Override public void onLoaderReset(Loader<Profile> arg0) {}
+        
+      });
+      l.forceLoad();
     }
     catch( Exception e ) {
       progressSpinner.cancel();
     }
   }
   
+  protected void onProfileLoaded(Profile profile) {
+    Log.d(TAG, "Profile loaded!");
+    Log.d(TAG, "Hello, " + profile.username);
+    
+    // TODO Create new account instance.
+    
+    progressSpinner.dismiss();
+    finish(); 
+  }
+
   private final Uri generateOauth2Uri(String client_id, String client_secret) {
     Uri.Builder builder = new Uri.Builder();
     builder.scheme("https");

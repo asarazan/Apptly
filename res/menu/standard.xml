@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:id="@+id/janky_stream_menu_item" android:titleCondensed="JANK" android:title="JANK JANK JANK"></item>
+    <item android:title="JANK AUTH JANK" android:id="@+id/auth_test_menu_item" android:titleCondensed="AUTH"></item>
 </menu>
