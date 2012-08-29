@@ -10,10 +10,13 @@ package com.virtuoussoftware.apptly.list;
 // From http://stackoverflow.com/questions/6277154/populate-listview-from-json
 
 import android.app.Activity;
+import android.content.AsyncTaskLoader;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.text.Html;
+import android.text.Spannable;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,89 +43,94 @@ import java.net.URISyntaxException;
 
 public class JSONStreamAdapter extends BaseAdapter implements ListAdapter {
 
-    private final Activity activity;
-    private final JSONArray jsonArray;
+  private final Activity activity;
+  private final JSONArray jsonArray;
 
-    public JSONStreamAdapter(Activity activity, JSONArray jsonArray) {
-        this.activity = activity;
-        this.jsonArray = jsonArray;
+  public JSONStreamAdapter(Activity activity, JSONArray jsonArray) {
+    this.activity = activity;
+    this.jsonArray = jsonArray;
+  }
+
+  public JSONStreamAdapter(Activity activity, String jsonString) {
+    JSONArray jsonArray = null;
+    try {
+      jsonArray = new JSONArray(jsonString);
+    } catch (JSONException e) {
+      Log.e("Exception Raised", e.getMessage(), e);
     }
 
-    public JSONStreamAdapter(Activity activity, String jsonString) {
-        JSONArray jsonArray = null;
-        try {
-            jsonArray = new JSONArray(jsonString);
-        } catch (JSONException e) {
+    this.activity = activity;
+    this.jsonArray = jsonArray;
+  }
+
+  @Override public int getCount() {
+
+    return jsonArray.length();
+  }
+
+  @Override public JSONObject getItem(int position) {
+
+    return jsonArray.optJSONObject(position);
+  }
+
+  @Override public long getItemId(int position) {
+    JSONObject jsonObject = getItem(position);
+
+    return jsonObject.optLong("id");
+  }
+
+  @Override public View getView(int position, View convertView, ViewGroup parent) {
+    if (convertView == null) {
+      convertView = activity.getLayoutInflater().inflate(R.layout.stream_item, null);
+    }
+
+    JSONObject jsonObject = getItem(position);
+
+    final TextView title = (TextView)convertView.findViewById(R.id.stream_item_title);
+    final TextView content = (TextView)convertView.findViewById(R.id.stream_item_content);
+    final ImageView portrait = (ImageView)convertView.findViewById(R.id.stream_item_portrait);
+
+    try {
+      JSONObject user = jsonObject.getJSONObject("user");
+
+      final String titleString = user.getString("name");
+      final Spanned htmlString = Html.fromHtml(jsonObject.getString("html"));
+
+      title.setText(titleString);
+      content.setText(htmlString);
+      portrait.setImageBitmap(BitmapFactory.decodeResource(activity.getResources(), R.drawable.ic_launcher));
+
+      new AsyncTask<String, String, Bitmap>() {
+
+        @Override
+        protected Bitmap doInBackground(String... strings) {
+          Bitmap retval = null;
+          try {
+            HttpClient httpClient = new DefaultHttpClient();
+            HttpGet get = new HttpGet();
+            get.setURI(new URI(strings[0]));
+            HttpResponse response = httpClient.execute(get);
+            HttpEntity entity = response.getEntity();
+            InputStream stream = entity.getContent();
+            retval = BitmapFactory.decodeStream(stream);
+          } catch (Exception e) {
             Log.e("Exception Raised", e.getMessage(), e);
+          }
+          return retval;
         }
 
-        this.activity = activity;
-        this.jsonArray = jsonArray;
-    }
-
-    @Override public int getCount() {
-
-        return jsonArray.length();
-    }
-
-    @Override public JSONObject getItem(int position) {
-
-        return jsonArray.optJSONObject(position);
-    }
-
-    @Override public long getItemId(int position) {
-        JSONObject jsonObject = getItem(position);
-
-        return jsonObject.optLong("id");
-    }
-
-    @Override public View getView(int position, View convertView, ViewGroup parent) {
-        if (convertView == null)
-            convertView = activity.getLayoutInflater().inflate(R.layout.stream_item, null);
-
-        JSONObject jsonObject = getItem(position);
-
-        final TextView title = (TextView)convertView.findViewById(R.id.stream_item_title);
-        final TextView content = (TextView)convertView.findViewById(R.id.stream_item_content);
-        final ImageView portrait = (ImageView)convertView.findViewById(R.id.stream_item_portrait);
-
-        try {
-            JSONObject user = jsonObject.getJSONObject("user");
-
-            title.setText(user.getString("name"));
-            content.setText(Html.fromHtml(jsonObject.getString("html")));
-
-            new AsyncTask<String, String, Bitmap>() {
-
-                @Override
-                protected Bitmap doInBackground(String... strings) {
-                    Bitmap retval = null;
-                    try {
-                        HttpClient httpClient = new DefaultHttpClient();
-                        HttpGet get = new HttpGet();
-                        get.setURI(new URI(strings[0]));
-                        HttpResponse response = httpClient.execute(get);
-                        HttpEntity entity = response.getEntity();
-                        InputStream stream = entity.getContent();
-                        retval = BitmapFactory.decodeStream(stream);
-                    } catch (Exception e) {
-                        Log.e("Exception Raised", e.getMessage(), e);
-                    }
-                    return retval;
-                }
-
-                @Override
-                protected void onPostExecute(Bitmap bitmap) {
-                    if (bitmap != null) {
-                        portrait.setImageBitmap(bitmap);
-                    }
-                }
-            }.execute(user.getJSONObject("avatar_image").getString("url"));
-
-        } catch (Exception e) {
-            Log.e("Exception Raised", e.getMessage(), e);
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+          if (bitmap != null && title.getText().equals(titleString)) {
+            portrait.setImageBitmap(bitmap);
+          }
         }
+      }.execute(user.getJSONObject("avatar_image").getString("url"));
 
-        return convertView;
+    } catch (Exception e) {
+      Log.e("Exception Raised", e.getMessage(), e);
     }
+
+    return convertView;
+  }
 }

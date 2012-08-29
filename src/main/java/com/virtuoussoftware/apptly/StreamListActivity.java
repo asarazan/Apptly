@@ -1,5 +1,6 @@
 package com.virtuoussoftware.apptly;
 
+import com.virtuoussoftware.apptly.auth.Account;
 import com.virtuoussoftware.apptly.auth.AuthenticationActivity;
 import com.virtuoussoftware.apptly.jankotron.SlowTabulizerActivity;
 
@@ -66,6 +67,9 @@ public class StreamListActivity extends FragmentActivity
     	  intent = new Intent(this, AuthenticationActivity.class);
     	  startActivity(intent);
     	  return true;
+      case R.id.apptly_log_out:
+        Account.setCurrentAccount(null, this);
+        return true;
     	}
     	
     	return super.onMenuItemSelected(featureId, item);

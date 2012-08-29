@@ -78,7 +78,7 @@ public class AuthenticationActivity extends Activity {
             return new AsyncTaskLoader<Profile>(ctx) {
               public Profile loadInBackground() {
                 Log.d(TAG, "Running api engine call. Who knows what wil happen now?");
-                return AppApiEngine.getSelfProfile(new Credentials());
+                return AppApiEngine.getSelfProfile(auth);
               };
             };
           }
@@ -91,7 +91,7 @@ public class AuthenticationActivity extends Activity {
         @Override
         public void onLoadFinished(Loader<Profile> arg0, Profile arg1) {
           Log.d(TAG, "LOAD FINISHED!");
-          anchor.onProfileLoaded(arg1);
+          anchor.onProfileLoaded(arg1, auth);
         }
 
         @Override public void onLoaderReset(Loader<Profile> arg0) {}
@@ -104,11 +104,12 @@ public class AuthenticationActivity extends Activity {
     }
   }
   
-  protected void onProfileLoaded(Profile profile) {
+  protected void onProfileLoaded(Profile profile, String authToken) {
     Log.d(TAG, "Profile loaded!");
     Log.d(TAG, "Hello, " + profile.username);
-    
-    // TODO Create new account instance.
+
+    Account account = new Account(authToken, profile);
+    Account.setCurrentAccount(account, this);
     
     progressSpinner.dismiss();
     finish(); 
