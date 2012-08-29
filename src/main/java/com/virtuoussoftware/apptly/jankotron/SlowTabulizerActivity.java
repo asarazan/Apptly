@@ -36,22 +36,6 @@ import com.virtuoussoftware.apptly.list.JSONStreamAdapter;
 
 public class SlowTabulizerActivity extends Activity {
 
-  private final String USER_ASARAZAN =
-      "{ " +
-          "id : '1', " +
-          "username : 'asarazan', " +
-          "name : 'Aaron Sarazan', " +
-          "'avatar_image' : { width : 256, height : 256, url : 'https://twimg0-a.akamaihd.net/profile_images/1269013375/Avatar_Cropped.jpg' } " +
-          "}";
-
-  private final String USER_KIRINDAVE =
-      "{ " +
-          "id : '2', " +
-          "username : 'KirinDave', " +
-          "name : 'Dave Fayram', " +
-          "'avatar_image' : { width : 50, height : 50, url : 'https://twimg0-a.akamaihd.net/profile_images/1417462431/RedDaveMageStatic.gif' } " +
-          "}";
-
   @Override
   protected void onCreate(Bundle arg0) {
     super.onCreate(arg0);
@@ -61,13 +45,6 @@ public class SlowTabulizerActivity extends Activity {
       e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
     }
     fetchStuff();
-  }
-
-  private String mockFetchGlobalStreamAsString() {
-    return "[" +
-        "  { 'id' : '2', 'user' : " + USER_KIRINDAVE + ", 'html' : '<html><b>@asarazan</b> There\\'s twoots EVERYWHERE</html>' }," +
-        "  { 'id' : '1', 'user' : " + USER_ASARAZAN + ", 'html' : '<html>Hey <b>@KirinDave</b>, how\\'re the twoots?</html>' }" +
-        "]";
   }
 
   private String fetchGlobalStreamAsString() {
