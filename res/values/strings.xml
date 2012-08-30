@@ -1,9 +1,8 @@
 <resources>
-
     <string name="app_name">Apptly</string>
+    <string name="auth_label">App.net</string>
     <string name="title_stream_detail">Stream Detail</string>
     <string name="title_stream_list">Apptly</string>
     <string name="authentication_waiting_title">Checking Account Details</string>
     <string name="authentication_waiting_message">Just a moment while we check your account details and make sure we\'re good. This is the only time we\'ll keep you waiting, we promise.</string>
-
 </resources>

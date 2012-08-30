@@ -34,6 +34,11 @@ public class Account {
     this.username = profile.username;
     this.authToken = authToken;
   }
+  
+  public Account(String authToken, String userid) {
+    this.username = userid;
+    this.authToken = authToken;
+  }
 
   public static Account getCurrentAccount(Context context) {
     if (currentAccount == null && !hasAttemptedLoadFromDisk) {

@@ -3,8 +3,14 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
-    <uses-permission android:name="android.permission.ACCOUNT_MANAGER" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
+    
     <uses-sdk android:targetSdkVersion="16" android:minSdkVersion="14"/>
     
     <application
@@ -29,7 +35,8 @@
         </activity>
         <activity
             android:name=".auth.AuthenticationActivity" 
-            android:label="Authenticate">
+            android:label="Authenticate App.net"
+            android:configChanges="orientation" >
         </activity>
         <activity android:label="JANKZ0R" android:name=".jankotron.SlowTabulizerActivity" />
         <service
@@ -43,10 +50,20 @@
                     android:name="android.content.SyncAdapter"
                     android:resource="@xml/syncadapter" />
         </service>
+        
+        <service 
+            android:name=".auth.AuthenticationService"
+            android:exported="true">
+        	<intent-filter>
+        	    <action android:name="android.accounts.AccountAuthenticator" />
+        	</intent-filter>
+        	<meta-data android:name="android.accounts.AccountAuthenticator"
+                       android:resource="@xml/authenticator" />
+        </service>
+        
         <provider
                 android:name=".content.ApptlyContentProvider"
                 android:authorities="com.virtuoussoftware.apptly.content" />
->>>>>>> e4b06906a452b68a7ef984a41c0a2c079cb14b2c
     </application>
 
 </manifest>
